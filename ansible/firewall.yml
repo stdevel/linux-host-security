@@ -1,0 +1,21 @@
+---
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - firewalld
+
+- name: Enable firewall
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Enable services
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+  loop:
+    - ssh
+    - http
+    - https

@@ -1,0 +1,20 @@
+---
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - fail2ban
+      - fail2ban-firewalld
+
+- name: Configure sshd jail
+  ansible.builtin.copy:
+    src: files/10-sshd.conf
+    dest: /etc/fail2ban/jail.d/10-sshd.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable service
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: true

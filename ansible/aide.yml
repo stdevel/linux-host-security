@@ -1,0 +1,27 @@
+---
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - aide
+
+- name: Initialize database
+  ansible.builtin.command: aide --init
+  args:
+    creates: /var/lib/aide/aide.db.new.gz
+
+- name: Overwrite database
+  ansible.builtin.copy:
+    src: /var/lib/aide/aide.db.new.gz
+    dest: /var/lib/aide/aide.db.gz
+    owner: root
+    group: root
+    mode: '0400'
+    remote_src: true
+
+- name: Create cronjob
+  ansible.builtin.copy:
+    src: files/cron-aide
+    dest: /etc/cron.d/aide
+    owner: root
+    group: root
+    mode: '0644'

@@ -1,0 +1,36 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # box configuration
+  config.vm.box = "generic/centos8s"
+
+  # Workaround for libvirt
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.qemu_use_session = false
+    # if the above doesn't work, try uncommenting the following instead
+    # libvirt.uri = 'qemu:///system'
+  end
+
+  # copy Ansible files
+  config.vm.synced_folder "../ansible", "/vagrant", type: "rsync"
+
+  # provider configuration
+  config.vm.provider "virtualbox" do |vb|
+    vb.cpus = "2"
+    vb.memory = "4096"
+  end
+  config.vm.provider "libvirt" do |lv|
+    lv.cpus = "2"
+    lv.memory = "4096"
+  end
+
+  # harden system
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "hardening.yml"
+    ansible.galaxy_role_file = '/vagrant/requirements.yml'
+    ansible.galaxy_roles_path = '/etc/ansible/roles'
+    ansible.galaxy_command = 'ansible-galaxy collection install -r %{role_file} ; ansible-galaxy role install -r %{role_file}'
+  end
+
+end

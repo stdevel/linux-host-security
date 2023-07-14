@@ -1,0 +1,13 @@
+---
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - selinux-policy
+      - selinux-policy-targeted
+      - policycoreutils-python-utils
+      - python3-policycoreutils
+
+- name: Enable SELinux
+  ansible.posix.selinux:
+    policy: targeted
+    state: enforcing
