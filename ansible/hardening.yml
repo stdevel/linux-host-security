@@ -2,24 +2,9 @@
 - name: Harden system
   hosts: all
   become: true
-  handlers:
-    - name: Restart SSH daemon
-      ansible.builtin.service:
-        name: sshd
-        state: restarted
-
-  pre_tasks:
-    - name: Configure SSH options
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: "{{ item.regexp }}"
-        line: "{{ item.line }}"
-      loop:
-        - regexp: '^PasswordAuthentication'
-          line: 'PasswordAuthentication yes'
-        - regexp: '^PermitRootLogin'
-          line: 'PermitRootLogin yes'
-      notify: Restart SSH daemon
+  tasks:
+    - name: Install web application
+      ansible.builtin.include_tasks: web.yml
 
   post_tasks:
     - name: Enable firewall

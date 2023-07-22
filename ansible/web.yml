@@ -1,0 +1,19 @@
+---
+- name: Install webserver
+  ansible.builtin.dnf:
+    name:
+      - httpd
+
+- name: Enable webserver
+  ansible.builtin.service:
+    name: httpd
+    enabled: true
+    state: started
+
+- name: Set dummy webpage
+  ansible.builtin.copy:
+    dest: /var/www/html/index.html
+    content: "Ohai, I'm a dummy page. :3"
+    owner: root
+    group: root
+    mode: '0644'
